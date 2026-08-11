@@ -4,6 +4,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Brings the database to life at startup: creates the parent directory and
@@ -28,7 +30,11 @@ public class DatabaseInitializer implements Closeable {
         } catch (IOException e) {
             throw new IllegalStateException("Could not create the database directory", e);
         }
-        schemaInitializer.initialize(connectionProvider.connection());
+        try (Connection connection = connectionProvider.connection()) {
+            schemaInitializer.initialize(connection);
+        } catch (SQLException e) {
+            throw new IllegalStateException("Could not release the schema connection", e);
+        }
     }
 
     public ConnectionProvider connectionProvider() {
