@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.varun-51</groupId>
+        <artifactId>recursive</artifactId>
+        <version>0.1.0</version>
+    </parent>
+
+    <artifactId>recursive-packaging</artifactId>
+    <name>Recursive Packaging</name>
+    <description>jpackage configuration, app icons, and installer artifacts.</description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.pcloud.jpackage</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.4.1</version>
+                <configuration>
+                    <debug>true</debug>
+                    <force>true</force>
+                    <installDir>Recursive</installDir>
+                    <appName>Recursive</appName>
+                    <vendor>Varun Nakar</vendor>
+                    <icon>src/main/resources/icons/icon.ico</icon>
+                    <javaOptions>
+                        <option>--add-modules</option>
+                        <option>javafx.controls,javafx.fxml</option>
+                    </javaOptions>
+                    <mainClass>com.recursive.app.RecursiveApplication</mainClass>
+                    <output>target/dist</output>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

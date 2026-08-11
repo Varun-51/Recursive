@@ -1,0 +1,8 @@
+target/
+RULES.md
+*.iml
+.idea/
+.vscode/
+*.log
+.DS_Store
+*~
