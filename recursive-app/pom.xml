@@ -54,11 +54,13 @@
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-controls</artifactId>
                     <classifier>win</classifier>
+                    <version>${javafx.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-fxml</artifactId>
                     <classifier>win</classifier>
+                    <version>${javafx.version}</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -74,11 +76,13 @@
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-controls</artifactId>
                     <classifier>mac</classifier>
+                    <version>${javafx.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-fxml</artifactId>
                     <classifier>mac</classifier>
+                    <version>${javafx.version}</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -94,11 +98,13 @@
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-controls</artifactId>
                     <classifier>linux</classifier>
+                    <version>${javafx.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.openjfx</groupId>
                     <artifactId>javafx-fxml</artifactId>
                     <classifier>linux</classifier>
+                    <version>${javafx.version}</version>
                 </dependency>
             </dependencies>
         </profile>
