@@ -127,6 +127,22 @@ Requires JDK 21. Tests run against an embedded HTTP fake for the Ollama
 client and a temporary database — no Ollama installation is required to
 build or test.
 
+## Packaging
+
+A bundle with a bundled JVM can be produced locally without any installer
+toolchain:
+
+```shell
+./mvnw -DskipTests -P release -Dskip.jpackage=false package
+```
+
+This shades all dependencies (including the native JavaFX libraries) into
+the app jar and places a runnable application image in
+`recursive-packaging/target/dist/Recursive/`. The `release` profile is what
+makes the shaded jar self-contained; the native-package CI workflow then
+builds the platform installers (.exe / .deb / .dmg) on the runners that
+carry the required toolchains (WiX on Windows).
+
 ## Running
 
 ```shell
@@ -171,7 +187,7 @@ status line instead of crashing.
 | 2 | PDF parsing, chunking, OCR, translation engine, semantic validator, AdaptiveFlow micro-pipeline | shipped |
 | 3 | Job orchestration, worker pool, events, pause/resume, crash recovery, reconstruction | shipped |
 | 4 | JavaFX screens (dashboard, jobs, translate/review pipeline, models, settings, logs) | shipped |
-| 5 | jpackage packaging, first-launch wizard (setup screen), documentation | in progress |
+| 5 | jpackage packaging, first-launch wizard (setup screen), documentation | shipped |
 
 ## License
 

@@ -15,12 +15,15 @@ jobs:
       matrix:
         include:
           - os: windows-latest
+            type: INSTALLER
             artifact: recursive-windows.exe
             glob: recursive-packaging/target/dist/*/*.exe
           - os: ubuntu-latest
+            type: INSTALLER
             artifact: recursive-linux.deb
             glob: recursive-packaging/target/dist/*/*.deb
           - os: macos-latest
+            type: INSTALLER
             artifact: recursive-macos.dmg
             glob: recursive-packaging/target/dist/*/*.dmg
     runs-on: ${{ matrix.os }}
@@ -35,7 +38,7 @@ jobs:
           cache: maven
 
       - name: Build application
-        run: mvn -B -DskipTests -Dskip.jpackage=false package
+        run: mvn -B -DskipTests -P release -Dskip.jpackage=false -Djpackage.type=INSTALLER -Djpackage.installDir=Recursive package
 
       - name: Upload installer
         uses: actions/upload-artifact@v4

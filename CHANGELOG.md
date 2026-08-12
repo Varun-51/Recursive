@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   settings, live log viewer; all blocking work off the FX thread.
 - First-run setup screen: hardware detection, Ollama server start with a
   bounded wait, and pull of the hardware-recommended model with progress.
+- Phase 5: jpackage bundle with a classpath-safe GUI launcher (plain main
+  class delegating to {@code Application.launch}), shaded self-contained
+  jar, local app-image build, and per-OS installer builds in CI.
 - Phase 1 core pipeline: PDF parsing (PDFBox), SQLite persistence,
   on-device translation via Ollama, deterministic semantic verification
   (AdaptiveFlow), OCR (Tess4J), PDF reconstruction, hardware detection

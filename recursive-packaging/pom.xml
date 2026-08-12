@@ -16,6 +16,10 @@
 
     <properties>
         <skip.jpackage>true</skip.jpackage>
+        <!-- APP_IMAGE works without a platform installer toolchain; the CI
+             workflow overrides this with INSTALLER for the per-OS artifacts. -->
+        <jpackage.type>APP_IMAGE</jpackage.type>
+        <jpackage.installDir></jpackage.installDir>
     </properties>
 
     <dependencies>
@@ -36,17 +40,14 @@
                     <skip>${skip.jpackage}</skip>
                     <debug>true</debug>
                     <force>true</force>
-                    <installDir>Recursive</installDir>
+                    <type>${jpackage.type}</type>
+                    <installDir>${jpackage.installDir}</installDir>
                     <name>Recursive</name>
                     <vendor>Varun Nakar</vendor>
                     <input>../recursive-app/target</input>
                     <mainJar>recursive-app-${recursive.version}.jar</mainJar>
                     <icon>src/main/resources/icons/icon.ico</icon>
-                    <javaOptions>
-                        <option>--add-modules</option>
-                        <option>javafx.controls,javafx.fxml</option>
-                    </javaOptions>
-                    <mainClass>com.recursive.app.RecursiveApplication</mainClass>
+                    <mainClass>com.recursive.app.GuiLauncher</mainClass>
                     <destination>target/dist</destination>
                 </configuration>
                 <executions>
