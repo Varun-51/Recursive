@@ -33,7 +33,7 @@ class CompositionRootTest {
             assertThat(root.openAiCompatibleModelService()).isNotNull();
             assertThat(root.remoteModelDiscovery()).isNotNull();
             assertThat(root.parsingService()).isNotNull();
-            assertThat(root.translationOrchestrator()).isNotNull();
+            assertThat(root.translationRunner()).isNotNull();
             assertThat(root.exportService()).isNotNull();
             assertThat(Files.exists(config.databaseFile())).isTrue();
 

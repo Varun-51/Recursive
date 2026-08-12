@@ -22,10 +22,14 @@ import com.recursive.domain.ValidationReport;
 import com.recursive.domain.ValidationStatus;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -141,7 +145,7 @@ class TranslationOrchestratorTest {
 
     private static class OrchestratorHarness {
         private final List<Block> blocks = new ArrayList<>();
-        private final List<Block> saved = new ArrayList<>();
+        private final List<Block> saved = Collections.synchronizedList(new ArrayList<>());
         private final List<Page> pages = new ArrayList<>();
         private final List<Job> jobs = new ArrayList<>();
         private final List<GlossaryTerm> glossary = new ArrayList<>();
@@ -187,10 +191,21 @@ class TranslationOrchestratorTest {
         }
 
         void translate() {
-            TranslationOrchestrator orchestrator = new TranslationOrchestrator(
-                    translator, validator, blockRepository(), pageRepository(), jobRepository(),
-                    glossaryService());
-            orchestrator.translatePage("j1", "p1", EN, DE, "llama3.1:8b", recursion);
+            ExecutorService workers = Executors.newVirtualThreadPerTaskExecutor();
+            ThroughputController throughput = new ThroughputController(
+                    () -> new com.recursive.domain.HardwareSpec(32, 16, 8, null, 0, 200, true),
+                    Duration.ofMillis(250));
+            try {
+                TranslationOrchestrator orchestrator = new TranslationOrchestrator(
+                        translator, validator, blockRepository(), glossaryService());
+                TranslationRunner runner = new TranslationRunner(
+                        orchestrator, throughput, workers, blockRepository(),
+                        pageRepository(), jobRepository());
+                runner.translatePage("j1", "p1", EN, DE, "llama3.1:8b", recursion);
+            } finally {
+                throughput.close();
+                workers.close();
+            }
         }
 
         Block onlyBlock() {

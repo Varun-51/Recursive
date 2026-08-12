@@ -109,7 +109,7 @@ public final class SetupScreen implements Screen {
         startServer.setDisable(true);
         ollamaStatus.setText("Starting\u2026");
         BackgroundTasks.run("setup-server-start", () -> {
-                    root.ollama().start();
+                    root.ollama().start(root.throughput().parallelSlots());
                     return root.ollama().waitUntilRunning(SERVER_TIMEOUT);
                 },
                 running -> {

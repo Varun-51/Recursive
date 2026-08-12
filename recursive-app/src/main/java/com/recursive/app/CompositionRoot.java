@@ -1,6 +1,7 @@
 package com.recursive.app;
 
 import com.recursive.application.CachingGlossaryService;
+import com.recursive.application.CompletionEstimator;
 import com.recursive.application.DocumentParsingService;
 import com.recursive.application.JobOrchestrator;
 import com.recursive.application.LogService;
@@ -9,7 +10,9 @@ import com.recursive.application.OpenAICompatibleModelService;
 import com.recursive.application.PDFExportService;
 import com.recursive.application.RemoteModelDiscoveryService;
 import com.recursive.application.StandardModelService;
+import com.recursive.application.ThroughputController;
 import com.recursive.application.TranslationOrchestrator;
+import com.recursive.application.TranslationRunner;
 import com.recursive.infrastructure.appconfig.AppConfig;
 import com.recursive.infrastructure.database.DatabaseInitializer;
 import com.recursive.infrastructure.database.JdbcBlockRepository;
@@ -27,6 +30,9 @@ import com.recursive.infrastructure.pdf.PdfReconstructor;
 import com.recursive.infrastructure.system.SystemMonitor;
 import com.recursive.infrastructure.verification.AdaptiveFlowValidator;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Assembles the application's services against the infrastructure
  * implementations. Created once at startup, closed once at shutdown; every
@@ -39,13 +45,16 @@ public final class CompositionRoot {
     private final LogService logService;
     private final OllamaModelProvider ollama;
     private final SystemMonitor hardware;
+    private final ThroughputController throughput;
+    private final ExecutorService translationWorkers;
+    private final CompletionEstimator estimator;
     private final JobOrchestrator jobOrchestrator;
     private final ModelService modelService;
     private final StandardModelService standardModelService;
     private final OpenAICompatibleModelService openAiCompatibleModelService;
     private final RemoteModelDiscoveryService remoteModelDiscovery;
     private final DocumentParsingService parsingService;
-    private final TranslationOrchestrator translationOrchestrator;
+    private final TranslationRunner translationRunner;
     private final PDFExportService exportService;
     private final JdbcJobRepository jobs;
     private final JdbcPageRepository pages;
@@ -54,12 +63,14 @@ public final class CompositionRoot {
 
     private CompositionRoot(AppConfig config, DatabaseInitializer database, LogService logService,
                             OllamaModelProvider ollama, SystemMonitor hardware,
+                            ThroughputController throughput, ExecutorService translationWorkers,
+                            CompletionEstimator estimator,
                             JobOrchestrator jobOrchestrator, ModelService modelService,
                             StandardModelService standardModelService,
                             OpenAICompatibleModelService openAiCompatibleModelService,
                             RemoteModelDiscoveryService remoteModelDiscovery,
                             DocumentParsingService parsingService,
-                            TranslationOrchestrator translationOrchestrator,
+                            TranslationRunner translationRunner,
                             PDFExportService exportService,
                             JdbcJobRepository jobs, JdbcPageRepository pages,
                             JdbcBlockRepository blocks, JdbcGlossaryRepository glossary) {
@@ -68,13 +79,16 @@ public final class CompositionRoot {
         this.logService = logService;
         this.ollama = ollama;
         this.hardware = hardware;
+        this.throughput = throughput;
+        this.translationWorkers = translationWorkers;
+        this.estimator = estimator;
         this.jobOrchestrator = jobOrchestrator;
         this.modelService = modelService;
         this.standardModelService = standardModelService;
         this.openAiCompatibleModelService = openAiCompatibleModelService;
         this.remoteModelDiscovery = remoteModelDiscovery;
         this.parsingService = parsingService;
-        this.translationOrchestrator = translationOrchestrator;
+        this.translationRunner = translationRunner;
         this.exportService = exportService;
         this.jobs = jobs;
         this.pages = pages;
@@ -96,6 +110,9 @@ public final class CompositionRoot {
 
         OllamaModelProvider ollama = new OllamaModelProvider(new OllamaHttpClient(config.ollamaBaseUrl()));
         SystemMonitor hardware = new SystemMonitor();
+        ThroughputController throughput = ThroughputController.polling(hardware);
+        ExecutorService translationWorkers = Executors.newVirtualThreadPerTaskExecutor();
+        CompletionEstimator estimator = new CompletionEstimator();
         AdaptiveFlowValidator validator = new AdaptiveFlowValidator();
         CachingGlossaryService glossaryService = new CachingGlossaryService(glossary);
 
@@ -109,14 +126,17 @@ public final class CompositionRoot {
         DocumentParsingService parsingService = new DocumentParsingService(
                 PdfDocumentParser.create(), new TesseractOcrEngine(), pages, blocks, images);
         TranslationOrchestrator translationOrchestrator = new TranslationOrchestrator(
-                ollama, validator, blocks, pages, jobs, glossaryService);
+                ollama, validator, blocks, glossaryService);
+        TranslationRunner translationRunner = new TranslationRunner(
+                translationOrchestrator, throughput, translationWorkers, blocks, pages, jobs);
         PDFExportService exportService = new PDFExportService(
                 new PdfReconstructor(pages, blocks, images), config.storagePaths());
 
         return new CompositionRoot(config, database, logService, ollama, hardware,
+                throughput, translationWorkers, estimator,
                 jobOrchestrator, modelService, standardModelService,
                 openAiCompatibleModelService, remoteModelDiscovery,
-                parsingService, translationOrchestrator, exportService,
+                parsingService, translationRunner, exportService,
                 jobs, pages, blocks, glossary);
     }
 
@@ -134,6 +154,14 @@ public final class CompositionRoot {
 
     public SystemMonitor hardware() {
         return hardware;
+    }
+
+    public ThroughputController throughput() {
+        return throughput;
+    }
+
+    public CompletionEstimator estimator() {
+        return estimator;
     }
 
     public JobOrchestrator jobOrchestrator() {
@@ -160,8 +188,8 @@ public final class CompositionRoot {
         return parsingService;
     }
 
-    public TranslationOrchestrator translationOrchestrator() {
-        return translationOrchestrator;
+    public TranslationRunner translationRunner() {
+        return translationRunner;
     }
 
     public PDFExportService exportService() {
@@ -185,6 +213,8 @@ public final class CompositionRoot {
     }
 
     public void close() {
+        throughput.close();
+        translationWorkers.close();
         database.close();
     }
 }

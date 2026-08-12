@@ -45,14 +45,18 @@ public class OllamaModelProvider implements ModelProvider, TranslationEngine {
     }
 
     @Override
-    public void start() {
+    public void start(int parallelSlots) {
         if (isRunning()) {
             return;
         }
+        int slots = Math.max(1, parallelSlots);
         try {
-            Process server = new ProcessBuilder("ollama", "serve")
-                    .redirectErrorStream(true).start();
-            log.info("Started Ollama server process {}", server.pid());
+            ProcessBuilder builder = new ProcessBuilder("ollama", "serve")
+                    .redirectErrorStream(true);
+            builder.environment().putIfAbsent("OLLAMA_NUM_PARALLEL", String.valueOf(slots));
+            Process server = builder.start();
+            log.info("Started Ollama server process {} with {} parallel slots",
+                    server.pid(), slots);
         } catch (IOException e) {
             throw new IllegalStateException("Could not start the Ollama server", e);
         }

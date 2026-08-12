@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://pmd.github.io/schema/Suppressions_2_0_0"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://pmd.github.io/schema/Suppressions_2_0_0 https://pmd.github.io/schema/Suppressions_2_0_0.xsd">
+
+    <!-- CompositionRoot's whole job is to know every service and wire them;
+         a high coupling count there is the architecture, not a smell. -->
+    <suppress rule="CouplingBetweenObjects" class="com.recursive.app.CompositionRoot"/>
+</suppressions>

@@ -5,6 +5,7 @@ import com.recursive.domain.Block;
 import com.recursive.domain.Job;
 import com.recursive.domain.Page;
 import com.recursive.domain.ValidationStatus;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -25,22 +26,31 @@ import java.util.Optional;
 
 /**
  * Pipeline screen for one job: ingest the PDF, translate page by page,
- * review individual blocks, and export the finished translation.
+ * review individual blocks, and export the finished translation. The
+ * "Translate all" entry point delegates its benchmark — model/RAM check,
+ * ETA estimate, continue-or-wait decision — to {@link TranslationBenchmark}.
  */
 public final class TranslateScreen implements Screen {
 
     private final CompositionRoot root;
     private final MainWindow window;
+    private final TranslationBenchmark benchmark;
     private final ComboBox<Job> jobSelector = new ComboBox<>();
     private final TableView<Page> pages = new TableView<>();
     private final TableView<Block> blocks = new TableView<>();
     private final TextArea editor = new TextArea();
     private final Label status = new Label();
     private final Label output = new Label();
+    private final Button translatePage;
+    private final Button translateAll;
+    private volatile boolean translationActive;
 
     public TranslateScreen(CompositionRoot root, MainWindow window) {
         this.root = root;
         this.window = window;
+        this.translatePage = new Button("Translate page");
+        this.translateAll = new Button("Translate all");
+        this.benchmark = new TranslationBenchmark(root, status::setText);
     }
 
     @Override
@@ -52,8 +62,8 @@ public final class TranslateScreen implements Screen {
         Button ingest = new Button("Ingest PDF");
         ingest.setOnAction(event -> ingest());
 
-        Button translate = new Button("Translate page");
-        translate.setOnAction(event -> translateSelectedPage());
+        translatePage.setOnAction(event -> translateSelectedPage());
+        translateAll.setOnAction(event -> translateAll());
 
         Button export = new Button("Export PDF");
         export.setOnAction(event -> export());
@@ -61,7 +71,7 @@ public final class TranslateScreen implements Screen {
         Button refresh = new Button("Refresh");
         refresh.setOnAction(event -> refreshJobs());
 
-        HBox toolbar = new HBox(8, jobSelector, ingest, translate, export, refresh);
+        HBox toolbar = new HBox(8, jobSelector, ingest, translatePage, translateAll, export, refresh);
         toolbar.setPadding(new Insets(8));
 
         SplitPane split = new SplitPane(pagesPanel(), blocksPanel());
@@ -173,6 +183,59 @@ public final class TranslateScreen implements Screen {
                 error -> status.setText("Ingest failed: " + error.getMessage()));
     }
 
+    private void translateAll() {
+        Job job = jobSelector.getValue();
+        if (job == null) {
+            status.setText("Select a job first");
+            return;
+        }
+        if (translationActive) {
+            status.setText("A translation is already running");
+            return;
+        }
+        benchmark.stopWaiting();
+        BackgroundTasks.run("translate-all-check", () -> benchmark.analyze(job),
+                analysis -> benchmark.decide(job, analysis, this::startTranslateAll),
+                error -> status.setText("Could not start: " + error.getMessage()));
+    }
+
+    private void startTranslateAll(Job job) {
+        if (translationActive) {
+            return;
+        }
+        translationActive = true;
+        root.estimator().reset();
+        long started = System.nanoTime();
+        translatePage.setDisable(true);
+        translateAll.setDisable(true);
+        BackgroundTasks.run("translate-all",
+                () -> {
+                    root.translationRunner().translateJob(job.id(), job.sourceLanguage(),
+                            job.targetLanguage(), job.modelName(), window.recursionSettings().get(),
+                            progress -> Platform.runLater(() -> {
+                                root.estimator().recordPage(progress.completedPages(),
+                                        (System.nanoTime() - started) / 1_000_000);
+                                long remaining = progress.totalPages() - progress.completedPages();
+                                status.setText("Translated " + progress.completedPages() + "/"
+                                        + progress.totalPages() + " pages \u2026 ~" + TranslationBenchmark.format(
+                                        root.estimator().estimateRemaining((int) remaining,
+                                                root.throughput().parallelSlots())) + " left");
+                            }));
+                    return null;
+                },
+                ignored -> finishTranslateAll("All pending pages translated"),
+                error -> finishTranslateAll("Translation failed: " + error.getMessage()));
+    }
+
+    private void finishTranslateAll(String message) {
+        translationActive = false;
+        translatePage.setDisable(false);
+        translateAll.setDisable(false);
+        status.setText(message);
+        loadPages();
+        refreshJobs();
+    }
+
     private void translateSelectedPage() {
         Job job = jobSelector.getValue();
         Page page = pages.getSelectionModel().getSelectedItem();
@@ -182,7 +245,7 @@ public final class TranslateScreen implements Screen {
         }
         BackgroundTasks.run("translate",
                 () -> {
-                    root.translationOrchestrator().translatePage(job.id(), page.id(),
+                    root.translationRunner().translatePage(job.id(), page.id(),
                             job.sourceLanguage(), job.targetLanguage(), job.modelName(),
                             window.recursionSettings().get());
                     return null;

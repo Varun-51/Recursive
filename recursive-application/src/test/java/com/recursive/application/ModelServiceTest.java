@@ -79,7 +79,7 @@ class ModelServiceTest {
             }
 
             @Override
-            public void start() {
+            public void start(int parallelSlots) {
             }
 
             @Override

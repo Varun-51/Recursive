@@ -41,6 +41,14 @@
         <exclude name="ExcessiveParameterList"/>
         <exclude name="CyclomaticComplexity"/>
     </rule>
+    <!-- Raised from the PMD default of 20: wiring classes such as the
+         composition root exist to know every service, so a class-level
+         coupling count around 30 is the architecture, not a smell. -->
+    <rule ref="category/java/design.xml/CouplingBetweenObjects">
+        <properties>
+            <property name="threshold" value="30"/>
+        </properties>
+    </rule>
     <rule ref="category/java/performance.xml">
         <exclude name="AvoidInstantiatingObjectsInLoops"/>
     </rule>

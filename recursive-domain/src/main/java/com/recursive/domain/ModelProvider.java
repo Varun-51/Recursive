@@ -16,8 +16,12 @@ public interface ModelProvider {
     /**
      * Starts the Ollama server process. Returns immediately; readiness is
      * probed with {@link #waitUntilRunning(java.time.Duration)}.
+     *
+     * @param parallelSlots how many concurrent translation requests the
+     *                      server should accept (passed through as
+     *                      {@code OLLAMA_NUM_PARALLEL}); must be at least 1
      */
-    void start();
+    void start(int parallelSlots);
 
     boolean waitUntilRunning(java.time.Duration timeout);
 
