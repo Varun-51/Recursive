@@ -35,7 +35,7 @@ jobs:
           test -s release-notes.md || echo "No changelog entry for $VERSION" > release-notes.md
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           body_path: release-notes.md
           files: recursive-app/target/recursive-app-*.jar
