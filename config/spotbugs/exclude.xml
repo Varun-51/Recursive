@@ -18,6 +18,12 @@
         <Bug pattern="EI_EXPOSE_REP2"/>
         <Class name="~com\.recursive\.infrastructure\..*"/>
     </Match>
+    <!-- Screens wire injected services and JavaFX shared state (ObjectProperty,
+         scene-graph shell) by design; copying would break the composition. -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Class name="~com\.recursive\.app\.ui\..*"/>
+    </Match>
     <!-- Placeholder data for tests only. -->
     <Match>
         <Bug pattern="RV_RETURN_VALUE_IGNORED"/>

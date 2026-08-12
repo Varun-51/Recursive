@@ -25,7 +25,6 @@ import java.util.Map;
  */
 public final class MainWindow {
 
-    private final CompositionRoot root;
     private final ObjectProperty<RecursionSettings> recursion =
             new SimpleObjectProperty<>(RecursionSettings.defaults());
     private final Map<String, Screen> screens = new LinkedHashMap<>();
@@ -35,7 +34,6 @@ public final class MainWindow {
     private final BorderPane shell = new BorderPane();
 
     public MainWindow(CompositionRoot root) {
-        this.root = root;
         register(new DashboardScreen(root));
         register(new SetupScreen(root));
         register(new JobsScreen(root));

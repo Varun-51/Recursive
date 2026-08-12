@@ -68,9 +68,10 @@ public final class SettingsScreen implements Screen {
         GridPane storage = new GridPane();
         storage.setHgap(12);
         storage.setVgap(6);
+        String analysisRoot = root.config().storagePaths().analysisRoot().toString();
         storage.addRow(0, new Label("Data root"), new Label(root.config().storagePaths().dataRoot().toString()));
         storage.addRow(1, new Label("Dev root"), new Label(root.config().storagePaths().devRoot().toString()));
-        storage.addRow(2, new Label("Analysis root"), new Label(root.config().storagePaths().analysisRoot().toString()));
+        storage.addRow(2, new Label("Analysis root"), new Label(analysisRoot));
 
         VBox panel = new VBox(14,
                 new Label("Recursion settings"), recursionPanel,

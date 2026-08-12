@@ -64,30 +64,7 @@ public final class TranslateScreen implements Screen {
         HBox toolbar = new HBox(8, jobSelector, ingest, translate, export, refresh);
         toolbar.setPadding(new Insets(8));
 
-        pages.getColumns().add(TableColumns.string("Page", 60,
-                page -> String.valueOf(page.pageNumber())));
-        pages.getColumns().add(TableColumns.string("Status", 110, page -> page.status().name()));
-        pages.getColumns().add(TableColumns.string("Retries", 70,
-                page -> String.valueOf(page.retryCount())));
-        pages.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-        pages.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, selected) -> loadBlocks());
-        VBox pagesPanel = new VBox(6, new Label("Pages"), pages);
-        VBox.setVgrow(pages, Priority.ALWAYS);
-
-        blocks.getColumns().add(TableColumns.string("Original", 300, Block::originalText));
-        blocks.getColumns().add(TableColumns.string("Translated", 300, block -> block.translatedText()));
-        blocks.getColumns().add(TableColumns.string("Validation", 110,
-                block -> block.validationStatus() == null ? "" : block.validationStatus().name()));
-        blocks.getColumns().add(TableColumns.string("Confidence", 90,
-                block -> block.confidenceScore() == null ? "" : String.valueOf(block.confidenceScore())));
-        blocks.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-        blocks.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, selected) -> showInEditor(selected));
-        VBox blocksPanel = new VBox(6, new Label("Blocks"), blocks);
-        VBox.setVgrow(blocks, Priority.ALWAYS);
-
-        SplitPane split = new SplitPane(pagesPanel, blocksPanel);
+        SplitPane split = new SplitPane(pagesPanel(), blocksPanel());
         split.setDividerPositions(0.3);
 
         Button save = new Button("Save edit");
@@ -102,6 +79,35 @@ public final class TranslateScreen implements Screen {
         VBox.setVgrow(split, Priority.ALWAYS);
 
         refreshJobs();
+        return panel;
+    }
+
+    private VBox pagesPanel() {
+        pages.getColumns().add(TableColumns.string("Page", 60,
+                page -> String.valueOf(page.pageNumber())));
+        pages.getColumns().add(TableColumns.string("Status", 110, page -> page.status().name()));
+        pages.getColumns().add(TableColumns.string("Retries", 70,
+                page -> String.valueOf(page.retryCount())));
+        pages.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        pages.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, selected) -> loadBlocks());
+        VBox panel = new VBox(6, new Label("Pages"), pages);
+        VBox.setVgrow(pages, Priority.ALWAYS);
+        return panel;
+    }
+
+    private VBox blocksPanel() {
+        blocks.getColumns().add(TableColumns.string("Original", 300, Block::originalText));
+        blocks.getColumns().add(TableColumns.string("Translated", 300, block -> block.translatedText()));
+        blocks.getColumns().add(TableColumns.string("Validation", 110,
+                block -> block.validationStatus() == null ? "" : block.validationStatus().name()));
+        blocks.getColumns().add(TableColumns.string("Confidence", 90,
+                block -> block.confidenceScore() == null ? "" : String.valueOf(block.confidenceScore())));
+        blocks.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        blocks.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, selected) -> showInEditor(selected));
+        VBox panel = new VBox(6, new Label("Blocks"), blocks);
+        VBox.setVgrow(blocks, Priority.ALWAYS);
         return panel;
     }
 

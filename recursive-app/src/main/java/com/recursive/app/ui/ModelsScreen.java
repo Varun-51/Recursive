@@ -16,8 +16,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
-
 /**
  * Model management: locally available Ollama models (with a recommendation
  * for the current hardware) and remote OpenAI-compatible catalogs.
@@ -134,8 +132,7 @@ public final class ModelsScreen implements Screen {
         try {
             return Integer.parseInt(port.getText().trim());
         } catch (NumberFormatException e) {
-            remoteStatus.setText("Port must be a number");
-            throw new IllegalArgumentException("Port must be a number");
+            throw new IllegalArgumentException("Port must be a number", e);
         }
     }
 

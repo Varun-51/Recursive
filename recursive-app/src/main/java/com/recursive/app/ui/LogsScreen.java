@@ -26,7 +26,7 @@ public final class LogsScreen implements Screen {
     private final LogService logService;
     private final TextArea area = new TextArea();
     private final ComboBox<String> levelFilter = new ComboBox<>();
-    private LogService.Level minimum;
+    private LogService.Level minimum = LogService.Level.DEBUG;
 
     public LogsScreen(LogService logService) {
         this.logService = logService;
@@ -63,17 +63,15 @@ public final class LogsScreen implements Screen {
 
     private void applyFilter() {
         String selected = levelFilter.getValue();
-        if (selected == null || selected.equals("All levels")) {
-            minimum = null;
-        } else {
-            minimum = LogService.Level.valueOf(selected);
-        }
+        minimum = selected == null || "All levels".equals(selected)
+                ? LogService.Level.DEBUG
+                : LogService.Level.valueOf(selected);
         area.clear();
         logService.recent(500).stream().filter(this::visible).forEach(this::appendNow);
     }
 
     private boolean visible(LogService.LogEntry entry) {
-        return minimum == null || entry.level().compareTo(minimum) >= 0;
+        return entry.level().compareTo(minimum) >= 0;
     }
 
     private void seed() {
