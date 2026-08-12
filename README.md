@@ -144,16 +144,33 @@ language pair**, and a **local model** from
 ollama list
 ```
 
+## Application screens
+
+The JavaFX shell provides six screens, reached from the sidebar:
+
+| Screen | Purpose |
+|---|---|
+| **Dashboard** | hardware summary, model/API status, per-job progress |
+| **Jobs** | create jobs (name, language pair, PDF, model), start / pause / resume / cancel, live counters |
+| **Translate** | the pipeline: ingest a PDF, translate page by page, review blocks, edit and re-validate them, export the finished document |
+| **Models** | locally installed Ollama models with a hardware-based recommendation, plus remote OpenAI-compatible catalogs |
+| **Settings** | recursion policy (max depth, stable passes, confidence threshold), storage locations, version information |
+| **Logs** | live view of the in-process log ring with a severity filter |
+
+All blocking work (database queries, OCR, model requests) runs off the
+JavaFX thread via `BackgroundTasks`; every screen reflects failures in the
+status line instead of crashing.
+
 ## Development status
 
 | Phase | Deliverable | Status |
 |---|---|---|
 | 0 | Maven skeleton, repo layout | shipped |
-| 1 | Domain model, ports, SQLite persistence, hardware detection, Ollama process management | in progress |
-| 2 | PDF parsing, chunking, OCR, translation engine, semantic validator, AdaptiveFlow micro-pipeline | planned |
-| 3 | Job orchestration, worker pool, events, pause/resume, crash recovery, reconstruction | planned |
-| 4 | JavaFX screens (dashboard, new translation, monitor, review, settings, export) | planned |
-| 5 | jpackage packaging, first-launch wizard, documentation | planned |
+| 1 | Domain model, ports, SQLite persistence, hardware detection, Ollama process management | shipped |
+| 2 | PDF parsing, chunking, OCR, translation engine, semantic validator, AdaptiveFlow micro-pipeline | shipped |
+| 3 | Job orchestration, worker pool, events, pause/resume, crash recovery, reconstruction | shipped |
+| 4 | JavaFX screens (dashboard, jobs, translate/review pipeline, models, settings, logs) | shipped |
+| 5 | jpackage packaging, first-launch wizard, documentation | in progress |
 
 ## License
 

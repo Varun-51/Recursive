@@ -47,6 +47,10 @@ public final class CompositionRoot {
     private final DocumentParsingService parsingService;
     private final TranslationOrchestrator translationOrchestrator;
     private final PDFExportService exportService;
+    private final JdbcJobRepository jobs;
+    private final JdbcPageRepository pages;
+    private final JdbcBlockRepository blocks;
+    private final JdbcGlossaryRepository glossary;
 
     private CompositionRoot(AppConfig config, DatabaseInitializer database, LogService logService,
                             OllamaModelProvider ollama, SystemMonitor hardware,
@@ -56,7 +60,9 @@ public final class CompositionRoot {
                             RemoteModelDiscoveryService remoteModelDiscovery,
                             DocumentParsingService parsingService,
                             TranslationOrchestrator translationOrchestrator,
-                            PDFExportService exportService) {
+                            PDFExportService exportService,
+                            JdbcJobRepository jobs, JdbcPageRepository pages,
+                            JdbcBlockRepository blocks, JdbcGlossaryRepository glossary) {
         this.config = config;
         this.database = database;
         this.logService = logService;
@@ -70,6 +76,10 @@ public final class CompositionRoot {
         this.parsingService = parsingService;
         this.translationOrchestrator = translationOrchestrator;
         this.exportService = exportService;
+        this.jobs = jobs;
+        this.pages = pages;
+        this.blocks = blocks;
+        this.glossary = glossary;
     }
 
     public static CompositionRoot build(AppConfig config) {
@@ -106,7 +116,8 @@ public final class CompositionRoot {
         return new CompositionRoot(config, database, logService, ollama, hardware,
                 jobOrchestrator, modelService, standardModelService,
                 openAiCompatibleModelService, remoteModelDiscovery,
-                parsingService, translationOrchestrator, exportService);
+                parsingService, translationOrchestrator, exportService,
+                jobs, pages, blocks, glossary);
     }
 
     public AppConfig config() {
@@ -155,6 +166,22 @@ public final class CompositionRoot {
 
     public PDFExportService exportService() {
         return exportService;
+    }
+
+    public JdbcJobRepository jobs() {
+        return jobs;
+    }
+
+    public JdbcPageRepository pages() {
+        return pages;
+    }
+
+    public JdbcBlockRepository blocks() {
+        return blocks;
+    }
+
+    public JdbcGlossaryRepository glossary() {
+        return glossary;
     }
 
     public void close() {

@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Phase 2: PDF parsing (PDFBox), OCR (Tess4J), chunking into blocks,
+  translation engine (Ollama), deterministic semantic validator,
+  AdaptiveFlow micro-pipeline.
+- Phase 3: job orchestration (start/pause/resume/cancel), the recursive
+  translate-validate-re-translate loop with a bounded attempt budget,
+  page/block counters, PDF reconstruction and export.
+- Phase 4: JavaFX application screens — dashboard, jobs, translate/review
+  pipeline, models (local + remote catalogs), recursion settings, live log
+  viewer; all blocking work off the FX thread.
 - Phase 1 core pipeline: PDF parsing (PDFBox), SQLite persistence,
   on-device translation via Ollama, deterministic semantic verification
   (AdaptiveFlow), OCR (Tess4J), PDF reconstruction, hardware detection
