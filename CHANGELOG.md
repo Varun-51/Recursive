@@ -14,9 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Phase 3: job orchestration (start/pause/resume/cancel), the recursive
   translate-validate-re-translate loop with a bounded attempt budget,
   page/block counters, PDF reconstruction and export.
-- Phase 4: JavaFX application screens — dashboard, jobs, translate/review
-  pipeline, models (local + remote catalogs), recursion settings, live log
-  viewer; all blocking work off the FX thread.
+- Phase 4: JavaFX application screens — dashboard, setup guide, jobs,
+  translate/review pipeline, models (local + remote catalogs), recursion
+  settings, live log viewer; all blocking work off the FX thread.
+- First-run setup screen: hardware detection, Ollama server start with a
+  bounded wait, and pull of the hardware-recommended model with progress.
 - Phase 1 core pipeline: PDF parsing (PDFBox), SQLite persistence,
   on-device translation via Ollama, deterministic semantic verification
   (AdaptiveFlow), OCR (Tess4J), PDF reconstruction, hardware detection

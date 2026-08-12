@@ -146,11 +146,12 @@ ollama list
 
 ## Application screens
 
-The JavaFX shell provides six screens, reached from the sidebar:
+The JavaFX shell provides seven screens, reached from the sidebar:
 
 | Screen | Purpose |
 |---|---|
 | **Dashboard** | hardware summary, model/API status, per-job progress |
+| **Setup** | first-run guide: hardware facts, Ollama server start, recommended model pull |
 | **Jobs** | create jobs (name, language pair, PDF, model), start / pause / resume / cancel, live counters |
 | **Translate** | the pipeline: ingest a PDF, translate page by page, review blocks, edit and re-validate them, export the finished document |
 | **Models** | locally installed Ollama models with a hardware-based recommendation, plus remote OpenAI-compatible catalogs |
@@ -170,7 +171,7 @@ status line instead of crashing.
 | 2 | PDF parsing, chunking, OCR, translation engine, semantic validator, AdaptiveFlow micro-pipeline | shipped |
 | 3 | Job orchestration, worker pool, events, pause/resume, crash recovery, reconstruction | shipped |
 | 4 | JavaFX screens (dashboard, jobs, translate/review pipeline, models, settings, logs) | shipped |
-| 5 | jpackage packaging, first-launch wizard, documentation | in progress |
+| 5 | jpackage packaging, first-launch wizard (setup screen), documentation | in progress |
 
 ## License
 
