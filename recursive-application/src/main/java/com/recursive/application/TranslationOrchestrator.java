@@ -65,7 +65,7 @@ public class TranslationOrchestrator {
                     glossaryService.lockedTermsFor(jobId));
             translateBlock(block, context, source, target, modelName, recursion);
         }
-        updateCounters(jobId, pageId, blocks.size());
+        updateCounters(jobId, pageId);
     }
 
     private void translateBlock(Block block, ProcessingContext context, Language source,
@@ -99,7 +99,7 @@ public class TranslationOrchestrator {
         }
     }
 
-    private void updateCounters(String jobId, String pageId, int pageBlockCount) {
+    private void updateCounters(String jobId, String pageId) {
         Page page = pageRepository.findById(pageId)
                 .orElseThrow(() -> new IllegalStateException("Unknown page: " + pageId));
         page.setStatus(PageStatus.COMPLETED);

@@ -41,9 +41,13 @@ public class JdbcBlockRepository implements BlockRepository {
     @Override
     public Block save(Block block) {
         String sql = """
-                INSERT OR REPLACE INTO blocks (%s)
+                INSERT OR REPLACE INTO blocks (id, page_id, block_index, content_type,
+                original_text, position_x, position_y, position_w, position_h,
+                font_name, font_size, font_style, reading_order, translated_text,
+                validation_status, confidence_score, retry_count, context_json,
+                validation_issues_json, created_at, updated_at)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                """.formatted(COLUMNS);
+                """;
         try (Connection connection = connectionProvider.connection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, block.id());

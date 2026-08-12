@@ -7,7 +7,7 @@ import java.util.Locale;
  * a key lookup that degrades to the key itself. Full resource bundles are
  * an infrastructure concern; this keeps the app layer free of I/O.
  */
-public class LocalizationService {
+public final class LocalizationService {
 
     private final String appName;
     private final Locale locale;

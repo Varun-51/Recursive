@@ -42,14 +42,17 @@ public class OpenAiCompatibleCatalog implements RemoteModelCatalog {
             HttpResponse<String> response = httpClient.send(request.build(),
                     HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                throw new IOException("Model catalog responded with HTTP " + response.statusCode());
+                throw new IllegalStateException("model catalog responded with HTTP "
+                        + response.statusCode());
             }
             return parseModels(response.body());
-        } catch (IOException | InterruptedException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-            throw new IllegalStateException("Could not reach model catalog at " + endpoint.baseUrl(), e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while reaching model catalog at "
+                    + endpoint.baseUrl(), e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not reach model catalog at "
+                    + endpoint.baseUrl(), e);
         }
     }
 

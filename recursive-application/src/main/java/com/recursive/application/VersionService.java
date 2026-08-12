@@ -4,7 +4,7 @@ package com.recursive.application;
  * Versioning facts surfaced to the UI: the application release, the model
  * snapshot a job ran against, and the build of the developer toolchain.
  */
-public class VersionService {
+public final class VersionService {
 
     private final String appVersion;
     private final String modelVersion;

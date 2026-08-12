@@ -1,9 +1,7 @@
 package com.recursive.application;
 
-import com.recursive.domain.Confidence;
 import com.recursive.domain.Language;
 import com.recursive.domain.ProcessingContext;
-import com.recursive.domain.TranslationEngine;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;

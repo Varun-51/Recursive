@@ -39,8 +39,13 @@ public class JdbcJobRepository implements JobRepository {
     @Override
     public Job save(Job job) {
         String sql = """
-                INSERT OR REPLACE INTO jobs (%s) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                """.formatted(COLUMNS);
+                INSERT OR REPLACE INTO jobs (id, name, source_file_path, source_lang_code,
+                source_lang_name, target_lang_code, target_lang_name, model_name,
+                configuration_json, status, total_pages, completed_pages, total_blocks,
+                completed_blocks, validated_blocks, failed_blocks, error_message,
+                created_at, updated_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                """;
         try (Connection connection = connectionProvider.connection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, job.id());

@@ -25,10 +25,13 @@ public class DatabaseInitializer implements Closeable {
     }
 
     public void initialize() {
-        try {
-            Files.createDirectories(databaseFile.getParent());
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not create the database directory", e);
+        Path parent = databaseFile.getParent();
+        if (parent != null) {
+            try {
+                Files.createDirectories(parent);
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not create the database directory", e);
+            }
         }
         try (Connection connection = connectionProvider.connection()) {
             schemaInitializer.initialize(connection);

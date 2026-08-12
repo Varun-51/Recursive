@@ -14,7 +14,6 @@ import com.recursive.domain.OcrResult;
 import com.recursive.domain.Page;
 import com.recursive.domain.PageRepository;
 import com.recursive.domain.PageStatus;
-import com.recursive.domain.ParseException;
 import com.recursive.domain.TextSegment;
 import com.recursive.domain.ValidationStatus;
 

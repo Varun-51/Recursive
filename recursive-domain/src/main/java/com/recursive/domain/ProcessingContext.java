@@ -23,6 +23,7 @@ public record ProcessingContext(
         if (glossaryTerms == null) {
             throw new IllegalArgumentException("glossaryTerms must not be null; pass an empty list");
         }
+        glossaryTerms = List.copyOf(glossaryTerms);
     }
 
     public static ProcessingContext empty() {

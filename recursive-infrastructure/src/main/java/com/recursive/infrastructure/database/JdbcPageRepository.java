@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +33,11 @@ public class JdbcPageRepository implements PageRepository {
     @Override
     public Page save(Page page) {
         String sql = """
-                INSERT OR REPLACE INTO pages (%s) VALUES (?,?,?,?,?,?,?,?,?,?,?)
-                """.formatted(COLUMNS);
+                INSERT OR REPLACE INTO pages (id, job_id, page_number, status,
+                extracted_json, translated_json, validation_json, retry_count,
+                error_message, created_at, updated_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                """;
         try (Connection connection = connectionProvider.connection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, page.id());

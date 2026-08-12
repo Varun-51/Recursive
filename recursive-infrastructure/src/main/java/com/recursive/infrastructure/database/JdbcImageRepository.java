@@ -34,8 +34,11 @@ public class JdbcImageRepository implements ImageRepository {
     @Override
     public ImageReference save(ImageReference image) {
         String sql = """
-                INSERT OR REPLACE INTO images (%s) VALUES (?,?,?,?,?,?,?,?,?,?)
-                """.formatted(COLUMNS);
+                INSERT OR REPLACE INTO images (id, page_id, image_index, position_x,
+                position_y, position_w, position_h, image_data, original_format,
+                created_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?)
+                """;
         try (Connection connection = connectionProvider.connection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, image.id());

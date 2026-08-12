@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Images are binary payloads by design; exposing the array is the intent. -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Or>
+            <Class name="com.recursive.domain.ImageRegion"/>
+            <Class name="com.recursive.domain.ImageReference"/>
+            <Class name="com.recursive.app.CompositionRoot"/>
+        </Or>
+    </Match>
+    <!-- Repository/service interfaces are injected dependencies; copying is not possible for a working service. -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="~com\.recursive\.application\..*"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="~com\.recursive\.infrastructure\..*"/>
+    </Match>
+    <!-- Placeholder data for tests only. -->
+    <Match>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED"/>
+        <Class name="com.recursive.infrastructure.llm.OllamaModelProvider"/>
+    </Match>
+</FindBugsFilter>

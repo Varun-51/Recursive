@@ -47,7 +47,9 @@ public class PdfDocumentParser implements DocumentParser {
             if (pages.stream().allMatch(page -> page.textSegments().isEmpty() && page.imageRegions().isEmpty())) {
                 return Optional.empty();
             }
-            return Optional.of(new DocumentStructure(pdfPath.getFileName().toString(), pages));
+            Path fileName = pdfPath.getFileName();
+            return Optional.of(new DocumentStructure(
+                    fileName == null ? pdfPath.toString() : fileName.toString(), pages));
         } catch (IOException e) {
             throw new ParseException("Could not read PDF file: " + pdfPath, e);
         }

@@ -78,10 +78,11 @@ public class OllamaHttpClient {
         try (java.io.InputStream body = stream.body()) {
             byte[] buffer = new byte[4096];
             StringBuilder line = new StringBuilder();
-            int read;
-            while ((read = body.read(buffer)) != -1) {
+            int read = body.read(buffer);
+            while (read != -1) {
                 line.append(new String(buffer, 0, read, java.nio.charset.StandardCharsets.UTF_8));
                 processLines(line, progressListener);
+                read = body.read(buffer);
             }
         }
     }
@@ -95,8 +96,8 @@ public class OllamaHttpClient {
 
     private void processLines(StringBuilder pending, Consumer<Double> progressListener) {
         String content = pending.toString();
-        int newline;
-        while ((newline = content.indexOf('\n')) != -1) {
+        int newline = content.indexOf('\n');
+        while (newline != -1) {
             String jsonLine = content.substring(0, newline);
             pending.delete(0, newline + 1);
             content = pending.toString();
@@ -109,6 +110,7 @@ public class OllamaHttpClient {
             } catch (IOException e) {
                 throw new IllegalStateException("Malformed pull event from Ollama", e);
             }
+            newline = content.indexOf('\n');
         }
     }
 

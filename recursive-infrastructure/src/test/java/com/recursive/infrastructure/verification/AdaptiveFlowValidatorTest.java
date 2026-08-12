@@ -1,8 +1,6 @@
 package com.recursive.infrastructure.verification;
 
-import com.recursive.domain.Confidence;
 import com.recursive.domain.GlossaryTerm;
-import com.recursive.domain.Language;
 import com.recursive.domain.ProcessingContext;
 import com.recursive.domain.ValidationReport;
 import com.recursive.domain.ValidationStatus;

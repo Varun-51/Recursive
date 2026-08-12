@@ -36,7 +36,10 @@ public class JsonSettingsRepository<T> {
 
     public void save(T settings) {
         try {
-            Files.createDirectories(settingsFile.getParent());
+            Path parent = settingsFile.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             objectMapper.writeValue(settingsFile.toFile(), settings);
         } catch (IOException e) {
             throw new IllegalStateException("Could not write settings file: " + settingsFile, e);

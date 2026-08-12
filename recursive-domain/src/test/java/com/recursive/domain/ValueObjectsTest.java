@@ -9,8 +9,10 @@ class ValueObjectsTest {
 
     @Test
     void languageRejectsBlankCode() {
-        assertThatThrownBy(() -> Language.of("  ", "English")).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> Language.of(null, "English")).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Language.of("  ", "English"))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> Language.of(null, "English"))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -22,8 +24,10 @@ class ValueObjectsTest {
 
     @Test
     void positionRejectsNegativeDimensions() {
-        assertThatThrownBy(() -> new Position(10, 10, -1, 5)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> new Position(10, 10, 5, -1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Position(10, 10, -1, 5))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Position(10, 10, 5, -1))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -33,9 +37,12 @@ class ValueObjectsTest {
 
     @Test
     void fontInfoValidatesAllFields() {
-        assertThatThrownBy(() -> new FontInfo(" ", 12f, FontStyle.REGULAR)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> new FontInfo("Helvetica", 0f, FontStyle.REGULAR)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> new FontInfo("Helvetica", 12f, null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new FontInfo(" ", 12f, FontStyle.REGULAR))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new FontInfo("Helvetica", 0f, FontStyle.REGULAR))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new FontInfo("Helvetica", 12f, null))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

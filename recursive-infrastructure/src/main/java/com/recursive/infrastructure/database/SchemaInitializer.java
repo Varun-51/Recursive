@@ -11,8 +11,7 @@ import java.sql.Statement;
  */
 public class SchemaInitializer {
 
-    private static final String[] DDL = {
-            """
+    private static final String CREATE_JOBS = """
             CREATE TABLE IF NOT EXISTS jobs (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -34,8 +33,9 @@ public class SchemaInitializer {
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             )
-            """,
-            """
+            """;
+
+    private static final String CREATE_PAGES = """
             CREATE TABLE IF NOT EXISTS pages (
                 id TEXT PRIMARY KEY,
                 job_id TEXT NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -49,8 +49,9 @@ public class SchemaInitializer {
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             )
-            """,
-            """
+            """;
+
+    private static final String CREATE_BLOCKS = """
             CREATE TABLE IF NOT EXISTS blocks (
                 id TEXT PRIMARY KEY,
                 page_id TEXT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
@@ -74,8 +75,9 @@ public class SchemaInitializer {
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             )
-            """,
-            """
+            """;
+
+    private static final String CREATE_IMAGES = """
             CREATE TABLE IF NOT EXISTS images (
                 id TEXT PRIMARY KEY,
                 page_id TEXT NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
@@ -88,8 +90,9 @@ public class SchemaInitializer {
                 original_format TEXT,
                 created_at TEXT NOT NULL
             )
-            """,
-            """
+            """;
+
+    private static final String CREATE_GLOSSARY = """
             CREATE TABLE IF NOT EXISTS glossary_terms (
                 id TEXT PRIMARY KEY,
                 job_id TEXT NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -100,14 +103,15 @@ public class SchemaInitializer {
                 occurrences INTEGER NOT NULL,
                 created_at TEXT NOT NULL
             )
-            """
-    };
+            """;
 
     public void initialize(Connection connection) {
         try (Statement statement = connection.createStatement()) {
-            for (String ddl : DDL) {
-                statement.execute(ddl);
-            }
+            statement.execute(CREATE_JOBS);
+            statement.execute(CREATE_PAGES);
+            statement.execute(CREATE_BLOCKS);
+            statement.execute(CREATE_IMAGES);
+            statement.execute(CREATE_GLOSSARY);
         } catch (SQLException e) {
             throw new IllegalStateException("Could not initialize the database schema", e);
         }

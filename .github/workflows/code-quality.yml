@@ -1,0 +1,28 @@
+name: Code Quality
+
+on:
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Checkstyle, PMD, SpotBugs
+        run: mvn -B -Pquality verify
+
+      - name: Upload quality reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports
+          path: '**/target/{checkstyle-result.xml,pmd.xml,spotbugsXml.xml}'
+          retention-days: 14

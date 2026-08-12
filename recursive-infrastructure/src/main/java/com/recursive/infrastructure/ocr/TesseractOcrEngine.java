@@ -45,8 +45,16 @@ public class TesseractOcrEngine implements OcrEngine {
         try {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(pageImage));
             if (image == null) {
-                throw new IOException("Unsupported image format: " + imageFormat);
+                return Optional.empty();
             }
+            return recognize(image);
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<OcrResult> recognize(BufferedImage image) {
+        try {
             String text = tesseract.doOCR(image);
             List<TextSegment> segments = text.lines()
                     .map(String::trim)
@@ -54,7 +62,7 @@ public class TesseractOcrEngine implements OcrEngine {
                     .map(line -> new TextSegment(line, UNKNOWN_POSITION, DEFAULT_FONT))
                     .toList();
             return segments.isEmpty() ? Optional.empty() : Optional.of(new OcrResult(segments, NEUTRAL_CONFIDENCE));
-        } catch (IOException | TesseractException e) {
+        } catch (TesseractException e) {
             return Optional.empty();
         }
     }

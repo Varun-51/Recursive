@@ -33,8 +33,10 @@ public class JdbcGlossaryRepository implements GlossaryRepository {
     @Override
     public GlossaryTerm save(GlossaryTerm term) {
         String sql = """
-                INSERT OR REPLACE INTO glossary_terms (%s) VALUES (?,?,?,?,?,?,?,?)
-                """.formatted(COLUMNS);
+                INSERT OR REPLACE INTO glossary_terms (id, job_id, source_term,
+                target_term, category, locked, occurrences, created_at)
+                VALUES (?,?,?,?,?,?,?,?)
+                """;
         try (Connection connection = connectionProvider.connection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, term.id());

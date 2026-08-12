@@ -32,7 +32,7 @@ import com.recursive.infrastructure.verification.AdaptiveFlowValidator;
  * implementations. Created once at startup, closed once at shutdown; every
  * collaborating object is constructor-injected from here.
  */
-public class CompositionRoot {
+public final class CompositionRoot {
 
     private final AppConfig config;
     private final DatabaseInitializer database;

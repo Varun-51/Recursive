@@ -14,7 +14,7 @@ public final class PromptBuilder {
 
     public static String translate(String text, String sourceCode, String targetCode,
                                    ProcessingContext context) {
-        StringBuilder prompt = new StringBuilder();
+        StringBuilder prompt = new StringBuilder(256);
         prompt.append("Translate the following text from ").append(sourceCode)
                 .append(" to ").append(targetCode)
                 .append(". Output only the translation, no explanations.\n");

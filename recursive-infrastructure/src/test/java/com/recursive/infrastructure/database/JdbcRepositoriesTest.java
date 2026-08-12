@@ -44,6 +44,53 @@ class JdbcRepositoriesTest {
         JdbcBlockRepository blocks = new JdbcBlockRepository(initializer.connectionProvider());
         JdbcImageRepository images = new JdbcImageRepository(initializer.connectionProvider());
         JdbcGlossaryRepository glossary = new JdbcGlossaryRepository(initializer.connectionProvider());
+        saveFixtures(jobs, pages, blocks, images, glossary);
+
+        Page loadedPage = pages.findById("p1").orElseThrow();
+        assertThat(loadedPage.status()).isEqualTo(PageStatus.COMPLETED);
+        assertThat(pages.findIncompleteByJobId("j1")).isEmpty();
+
+        Block loadedBlock = blocks.findById("b1").orElseThrow();
+        assertThat(loadedBlock.translatedText()).isEqualTo("Hallo");
+        assertThat(loadedBlock.validationStatus()).isEqualTo(ValidationStatus.PASS);
+        assertThat(loadedBlock.confidenceScore()).isEqualTo(0.875);
+        assertThat(loadedBlock.retryCount()).isEqualTo(2);
+        assertThat(loadedBlock.fontInfo().name()).isEqualTo("Helvetica");
+        assertThat(loadedBlock.position().width()).isEqualTo(300f);
+        assertThat(blocks.findUnprocessedByPageId("p1")).isEmpty();
+
+        ImageReference loadedImage = images.findByPageId("p1").get(0);
+        assertThat(loadedImage.imageData()).containsExactly(1, 2, 3);
+
+        assertThat(glossary.findLockedByJobId("j1")).extracting(GlossaryTerm::targetTerm)
+                .containsExactly("Rechnung");
+        assertThat(glossary.findByJobId("j1").get(0).occurrences()).isEqualTo(7);
+    }
+
+    @Test
+    void deletesRemoveJobScopedRows() {
+        initializer = new DatabaseInitializer(databaseFile);
+        initializer.initialize();
+        JdbcJobRepository jobs = new JdbcJobRepository(initializer.connectionProvider());
+        JdbcPageRepository pages = new JdbcPageRepository(initializer.connectionProvider());
+        JdbcBlockRepository blocks = new JdbcBlockRepository(initializer.connectionProvider());
+        JdbcImageRepository images = new JdbcImageRepository(initializer.connectionProvider());
+        JdbcGlossaryRepository glossary = new JdbcGlossaryRepository(initializer.connectionProvider());
+        saveFixtures(jobs, pages, blocks, images, glossary);
+
+        pages.deleteByJobId("j1");
+        assertThat(pages.findByJobId("j1")).isEmpty();
+        assertThat(blocks.findByPageId("p1")).isEmpty();
+        assertThat(images.findByPageId("p1")).isEmpty();
+        assertThat(glossary.findByJobId("j1")).hasSize(1);
+
+        glossary.deleteByJobId("j1");
+        assertThat(glossary.findByJobId("j1")).isEmpty();
+    }
+
+    private static void saveFixtures(JdbcJobRepository jobs, JdbcPageRepository pages,
+                                     JdbcBlockRepository blocks, JdbcImageRepository images,
+                                     JdbcGlossaryRepository glossary) {
         Instant now = Instant.now();
         jobs.save(new Job("j1", "nightly", "C:/docs/in.pdf", Language.of("en", "English"),
                 Language.of("de", "Deutsch"), "llama3.1:8b", null, JobStatus.PROCESSING,
@@ -65,35 +112,6 @@ class JdbcRepositoriesTest {
         GlossaryTerm term = new GlossaryTerm("g1", "j1", "invoice", "Rechnung", "finance",
                 true, 7, now);
         glossary.save(term);
-
-        Page loadedPage = pages.findById("p1").orElseThrow();
-        assertThat(loadedPage.status()).isEqualTo(PageStatus.COMPLETED);
-        assertThat(pages.findIncompleteByJobId("j1")).isEmpty();
-
-        Block loadedBlock = blocks.findById("b1").orElseThrow();
-        assertThat(loadedBlock.translatedText()).isEqualTo("Hallo");
-        assertThat(loadedBlock.validationStatus()).isEqualTo(ValidationStatus.PASS);
-        assertThat(loadedBlock.confidenceScore()).isEqualTo(0.875);
-        assertThat(loadedBlock.retryCount()).isEqualTo(2);
-        assertThat(loadedBlock.fontInfo().name()).isEqualTo("Helvetica");
-        assertThat(loadedBlock.position().width()).isEqualTo(300f);
-        assertThat(blocks.findUnprocessedByPageId("p1")).isEmpty();
-
-        ImageReference loadedImage = images.findByPageId("p1").get(0);
-        assertThat(loadedImage.imageData()).containsExactly(1, 2, 3);
-
-        assertThat(glossary.findLockedByJobId("j1")).extracting(GlossaryTerm::targetTerm)
-                .containsExactly("Rechnung");
-        assertThat(glossary.findByJobId("j1").get(0).occurrences()).isEqualTo(7);
-
-        pages.deleteByJobId("j1");
-        assertThat(pages.findByJobId("j1")).isEmpty();
-        assertThat(blocks.findByPageId("p1")).isEmpty();
-        assertThat(images.findByPageId("p1")).isEmpty();
-        assertThat(glossary.findByJobId("j1")).hasSize(1);
-
-        glossary.deleteByJobId("j1");
-        assertThat(glossary.findByJobId("j1")).isEmpty();
     }
 
     @Test

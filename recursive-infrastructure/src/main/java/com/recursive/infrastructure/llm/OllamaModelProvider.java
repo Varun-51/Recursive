@@ -25,11 +25,9 @@ public class OllamaModelProvider implements ModelProvider, TranslationEngine {
     private static final long BYTES_PER_GB = 1024L * 1024L * 1024L;
 
     private final OllamaHttpClient client;
-    private final String baseUrl;
 
     public OllamaModelProvider(OllamaHttpClient client) {
         this.client = client;
-        this.baseUrl = "http://localhost:11434";
     }
 
     public static OllamaModelProvider local() {
@@ -122,10 +120,10 @@ public class OllamaModelProvider implements ModelProvider, TranslationEngine {
             probe.getInputStream().readAllBytes();
             probe.waitFor();
             return probe.exitValue() == 0;
-        } catch (IOException | InterruptedException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        } catch (IOException e) {
             return false;
         }
     }
