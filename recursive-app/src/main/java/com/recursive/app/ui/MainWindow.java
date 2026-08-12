@@ -37,6 +37,7 @@ public final class MainWindow {
     public MainWindow(CompositionRoot root) {
         this.root = root;
         register(new DashboardScreen(root));
+        register(new SetupScreen(root));
         register(new JobsScreen(root));
         register(new TranslateScreen(root, this));
         register(new ModelsScreen(root));
