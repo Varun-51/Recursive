@@ -38,7 +38,7 @@
         <pdfbox.version>3.0.3</pdfbox.version>
         <tess4j.version>5.9.0</tess4j.version>
         <sqlite-jdbc.version>3.45.3.0</sqlite-jdbc.version>
-        <hikaricp.version>5.1.0</hikaricp.version>
+        <hikaricp.version>7.1.0</hikaricp.version>
         <oshi.version>6.6.3</oshi.version>
         <jackson.version>2.16.2</jackson.version>
         <slf4j.version>2.0.13</slf4j.version>
