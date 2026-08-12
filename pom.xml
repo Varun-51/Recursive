@@ -34,7 +34,7 @@
         <maven.compiler.release>21</maven.compiler.release>
 
         <recursive.version>0.1.0</recursive.version>
-        <javafx.version>21.0.5</javafx.version>
+        <javafx.version>26.0.2</javafx.version>
         <pdfbox.version>3.0.3</pdfbox.version>
         <tess4j.version>5.9.0</tess4j.version>
         <sqlite-jdbc.version>3.45.3.0</sqlite-jdbc.version>
