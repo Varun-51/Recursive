@@ -71,7 +71,7 @@ public class TranslationOrchestrator {
 
     private void translateBlock(Block block, ProcessingContext context, Language source,
                                 Language target, String modelName, RecursionSettings recursion) {
-        int passes = 0;
+        int passes = block.retryCount();
         while (true) {
             Optional<String> translation = translator.translate(block.originalText(), source,
                     target, context, modelName);

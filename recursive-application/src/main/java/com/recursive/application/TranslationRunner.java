@@ -60,6 +60,10 @@ public class TranslationRunner {
                     source, target, modelName, recursion, pageLatch));
         }
         awaitQuietly(pageLatch);
+        pageRepository.findById(pageId).ifPresent(page -> {
+            page.setStatus(PageStatus.COMPLETED);
+            pageRepository.save(page);
+        });
         updateCounters(jobId, pageId);
     }
 
@@ -136,13 +140,7 @@ public class TranslationRunner {
         updateCounters(jobId, pageId);
     }
 
-    /** Serialized so concurrent page completions never lose each other's counter updates. */
     private synchronized void updateCounters(String jobId, String pageId) {
-        Page page = pageRepository.findById(pageId)
-                .orElseThrow(() -> new IllegalStateException("Unknown page: " + pageId));
-        page.setStatus(PageStatus.COMPLETED);
-        pageRepository.save(page);
-
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new IllegalStateException("Unknown job: " + jobId));
         List<Page> pages = pageRepository.findByJobId(jobId);

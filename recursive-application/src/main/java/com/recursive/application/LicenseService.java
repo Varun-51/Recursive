@@ -1,21 +1,20 @@
 package com.recursive.application;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.recursive.domain.LicenseRepository;
 
-/**
- * Tracks whether the user accepted the license. Persistence of the
- * acceptance state is an infrastructure concern; this service only owns
- * the in-session fact.
- */
 public class LicenseService {
 
-    private final AtomicBoolean accepted = new AtomicBoolean();
+    private final LicenseRepository repository;
+
+    public LicenseService(LicenseRepository repository) {
+        this.repository = repository;
+    }
 
     public boolean isAccepted() {
-        return accepted.get();
+        return repository.isAccepted();
     }
 
     public void accept() {
-        accepted.set(true);
+        repository.accept();
     }
 }
