@@ -31,7 +31,8 @@ public class PdfImageExtractor {
             for (COSName name : resources.getXObjectNames()) {
                 PDXObject xObject = resources.getXObject(name);
                 if (xObject instanceof PDImageXObject image) {
-                    regions.add(toRegion(image, index++));
+                    regions.add(toRegion(image, index));
+                    index += 1;
                 }
             }
             return regions;

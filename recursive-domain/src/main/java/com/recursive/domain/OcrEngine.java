@@ -7,6 +7,7 @@ import java.util.Optional;
  * recognized text segments with coordinates; used only for pages the text
  * extractor could not read.
  */
+@FunctionalInterface
 public interface OcrEngine {
 
     Optional<OcrResult> recognize(byte[] pageImage, String imageFormat);

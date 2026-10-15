@@ -88,9 +88,10 @@ public class OllamaHttpClient {
     }
 
     public String generate(String modelTag, String prompt) throws IOException {
+        String model = objectMapper.writeValueAsString(modelTag);
+        String promptJson = objectMapper.writeValueAsString(prompt);
         JsonNode body = objectMapper.readTree(send("api/generate", "POST",
-                "{\"model\":" + objectMapper.writeValueAsString(modelTag) + ",\"prompt\":" + objectMapper.writeValueAsString(prompt)
-                        + ",\"stream\":false}"));
+                "{\"model\":" + model + ",\"prompt\":" + promptJson + ",\"stream\":false}"));
         return body.has("response") ? body.get("response").asText() : "";
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
  * {@code /v1/models}. Implementations speak HTTP and own retry/timeout
  * policy; callers see plain domain models.
  */
+@FunctionalInterface
 public interface RemoteModelCatalog {
 
     List<ModelInfo> listModels(RemoteEndpoint endpoint);

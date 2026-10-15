@@ -95,7 +95,8 @@ public class TranslationRunner {
                 } finally {
                     int done;
                     synchronized (completed) {
-                        done = ++completed[0];
+                        completed[0] += 1;
+                        done = completed[0];
                     }
                     progress.accept(new TranslationProgress(done, pages.size()));
                     jobLatch.countDown();
