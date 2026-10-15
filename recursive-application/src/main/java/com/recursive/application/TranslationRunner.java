@@ -64,7 +64,7 @@ public class TranslationRunner {
             page.setStatus(PageStatus.COMPLETED);
             pageRepository.save(page);
         });
-        updateCounters(jobId, pageId);
+        updateCounters(jobId);
     }
 
     /**
@@ -137,10 +137,10 @@ public class TranslationRunner {
             page.setStatus(PageStatus.FAILED);
             pageRepository.save(page);
         });
-        updateCounters(jobId, pageId);
+        updateCounters(jobId);
     }
 
-    private synchronized void updateCounters(String jobId, String pageId) {
+    private synchronized void updateCounters(String jobId) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new IllegalStateException("Unknown job: " + jobId));
         List<Page> pages = pageRepository.findByJobId(jobId);
