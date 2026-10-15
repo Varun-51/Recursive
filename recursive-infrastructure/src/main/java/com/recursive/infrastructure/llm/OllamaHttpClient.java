@@ -63,7 +63,7 @@ public class OllamaHttpClient {
      * as the server reports them.
      */
     public void pull(String modelTag, Consumer<Double> progressListener) throws IOException {
-        String request = "{\"name\":\"" + modelTag + "\",\"stream\":true}";
+        String request = "{\"name\":" + objectMapper.writeValueAsString(modelTag) + ",\"stream\":true}";
         HttpResponse<java.io.InputStream> stream;
         try {
             stream = httpClient.send(build("api/pull", "POST", request),
@@ -88,9 +88,10 @@ public class OllamaHttpClient {
     }
 
     public String generate(String modelTag, String prompt) throws IOException {
+        String model = objectMapper.writeValueAsString(modelTag);
+        String promptJson = objectMapper.writeValueAsString(prompt);
         JsonNode body = objectMapper.readTree(send("api/generate", "POST",
-                "{\"model\":\"" + modelTag + "\",\"prompt\":" + objectMapper.writeValueAsString(prompt)
-                        + ",\"stream\":false}"));
+                "{\"model\":" + model + ",\"prompt\":" + promptJson + ",\"stream\":false}"));
         return body.has("response") ? body.get("response").asText() : "";
     }
 

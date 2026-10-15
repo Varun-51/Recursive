@@ -19,7 +19,8 @@ public class ConnectionProvider implements Closeable {
 
     public ConnectionProvider(Path databaseFile) {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:sqlite:" + databaseFile.toAbsolutePath().normalize());
+        config.setJdbcUrl("jdbc:sqlite:" + databaseFile.toAbsolutePath().normalize()
+                + "?journal_mode=WAL&busy_timeout=5000");
         config.setMaximumPoolSize(8);
         config.setPoolName("recursive-sqlite");
         config.setConnectionTestQuery("SELECT 1");

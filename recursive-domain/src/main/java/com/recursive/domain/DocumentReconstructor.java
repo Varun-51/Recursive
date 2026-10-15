@@ -7,6 +7,7 @@ import java.nio.file.Path;
  * Implementations own the layout-engineering details (text expansion,
  * overflow pages, image placement); callers own page ordering.
  */
+@FunctionalInterface
 public interface DocumentReconstructor {
 
     Path reconstruct(Path outputDirectory, String jobId);

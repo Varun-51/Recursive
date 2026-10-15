@@ -105,6 +105,13 @@ public class SchemaInitializer {
             )
             """;
 
+    private static final String CREATE_LICENSE = """
+            CREATE TABLE IF NOT EXISTS license (
+                id INTEGER PRIMARY KEY,
+                accepted INTEGER NOT NULL DEFAULT 0
+            )
+            """;
+
     public void initialize(Connection connection) {
         try (Statement statement = connection.createStatement()) {
             statement.execute(CREATE_JOBS);
@@ -112,6 +119,7 @@ public class SchemaInitializer {
             statement.execute(CREATE_BLOCKS);
             statement.execute(CREATE_IMAGES);
             statement.execute(CREATE_GLOSSARY);
+            statement.execute(CREATE_LICENSE);
         } catch (SQLException e) {
             throw new IllegalStateException("Could not initialize the database schema", e);
         }

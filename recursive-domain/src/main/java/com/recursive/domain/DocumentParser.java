@@ -8,6 +8,7 @@ import java.util.Optional;
  * Implementations stream page by page so multi-hundred-page documents are
  * never resident in memory at once.
  */
+@FunctionalInterface
 public interface DocumentParser {
 
     /**

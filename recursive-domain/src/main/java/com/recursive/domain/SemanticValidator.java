@@ -8,6 +8,7 @@ import java.util.Optional;
  * relationships, and terminology — and must surface failures as structured
  * issues usable as re-translation guidance.
  */
+@FunctionalInterface
 public interface SemanticValidator {
 
     Optional<ValidationReport> validate(String originalText, String translatedText,

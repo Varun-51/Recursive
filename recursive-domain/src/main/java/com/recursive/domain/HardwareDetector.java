@@ -5,6 +5,7 @@ package com.recursive.domain;
  * best underlying source for each OS (OSHI) but the contract stays a
  * plain value object.
  */
+@FunctionalInterface
 public interface HardwareDetector {
 
     HardwareSpec detect();
